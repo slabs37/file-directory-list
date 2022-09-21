@@ -3,6 +3,7 @@
 Easily display files and folders in a mobile friendly, clean and cool way. Just drop the `index.php` in your folder and you are ready to go. Past versions of this script can be found here: https://halgatewood.com/free/file-directory-list/
 
 This is a fork with same page media viewing and disabled folder functionality
+A demo of this fork can be found here: https://pooyahaghi.ir/ri/dir/
 
 ## Options 
 
