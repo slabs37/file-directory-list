@@ -1,8 +1,9 @@
 # Modified Free Super Clean PHP File Directory Listing Script
 
-Easily display files and folders in a mobile friendly, clean and cool way. Just drop the `index.php` in your folder and you are ready to go. Past versions of this script can be found here: https://halgatewood.com/free/file-directory-list/
+Easily display files and folders in a mobile friendly, clean and cool way. ~~Just drop the `index.php` in your folder and you are ready to go~~. Past versions of this script can be found here: https://halgatewood.com/free/file-directory-list/
 
 This is a fork with same page media viewing and disabled folder functionality
+For pdf-to-image viewing functionality you need to include pdftmp and pdf.php in the folder
 A demo of this fork can be found here: https://pooyahaghi.ir/ri/dir/
 
 ## Options 
