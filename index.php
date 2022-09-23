@@ -190,7 +190,7 @@ function get_directory_size($path)
 // SHOW THE MEDIA BLOCK
 function display_block( $file )
 {
-	global $ignore_file_list, $ignore_ext_list, $force_download;
+	global $ignore_file_list, $ignore_ext_list, $pdf_view, $force_download;
 	
 	$file_ext = ext($file);
 	if( !$file_ext AND is_dir($file)) $file_ext = "dir";
@@ -207,17 +207,17 @@ function display_block( $file )
     	$rtn .= "	<div class=\"name\">";
 	}
      elseif ($file_ext === "pdf") {
-        //if ($pdf_view === TRUE) {
+        if ($pdf_view) {
 	   	$rtn = "<div class=\"block\">";
     	$rtn .= "<a href=\"javascript:void(0);\" onclick=\"makePdf('$file')\" class=\"$file_ext\"{$download_att}>";
     	$rtn .= "	<div class=\"img $file_ext\"></div>";
     	$rtn .= "	<div class=\"name\">";
-        //} else {
-        //$rtn = "<div class=\"block\">";
-    	//$rtn .= "<a href=\"$file\" class=\"$file_ext\"{$download_att}>";
-    	//$rtn .= "	<div class=\"img $file_ext\"></div>";
-    	//$rtn .= "	<div class=\"name\">";
-        //}
+        } else {
+        $rtn = "<div class=\"block\">";
+    	$rtn .= "<a href=\"$file\" class=\"$file_ext\"{$download_att}>";
+    	$rtn .= "	<div class=\"img $file_ext\"></div>";
+    	$rtn .= "	<div class=\"name\">";
+        }
 	}
 	 elseif ($file_ext === "jpg" OR $file_ext == "png" OR $file_ext == "gif" OR$file_ext == "webp") {
         $rtn = "<div class=\"block\">";
