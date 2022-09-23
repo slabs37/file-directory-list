@@ -13,7 +13,7 @@ Free PHP File Directory Listing Script - Version 1.10
 	$color	= "light";
 	
 	// ADD SPECIFIC FILES YOU WANT TO IGNORE HERE
-	$ignore_file_list = array( ".htaccess", "Thumbs.db", ".DS_Store", "index.php", "video.html", "pdf.php", "error_log" );
+	$ignore_file_list = array( ".htaccess", "Thumbs.db", ".DS_Store", "index.php", "pdf.php", "error_log", "pdftmp" );
 	
 	// ADD SPECIFIC FILE EXTENSIONS YOU WANT TO IGNORE HERE, EXAMPLE: array('psd','jpg','jpeg', )
 	$ignore_ext_list = array( );
@@ -27,14 +27,16 @@ Free PHP File Directory Listing Script - Version 1.10
 ";
 	
 	// TOGGLE SUB FOLDERS, SET TO false IF YOU WANT OFF
-	$toggle_sub_folders = true;
+	$toggle_sub_folders = false;
 	
 	// FORCE DOWNLOAD ATTRIBUTE
 	$force_download = false;
 	
 	// IGNORE EMPTY FOLDERS
 	$ignore_empty_folders = true;
-
+	
+	// ENABLE PDF TO IMAGE VIEWING
+	$pdf_view = true;
 	
 // SET TITLE BASED ON FOLDER NAME, IF NOT SET ABOVE
 if( !$title ) { $title = clean_title(basename(dirname(__FILE__))); }
@@ -119,7 +121,7 @@ if( !$title ) { $title = clean_title(basename(dirname(__FILE__))); }
   padding: 10px;
   border: 1px solid #888;
   border-radius: 10px;
-  width: 80%; /* Could be more or less, depending on screen size */
+  width: 95%; /* Could be more or less, depending on screen size */
 }
 	</style>
 </head>
@@ -127,11 +129,20 @@ if( !$title ) { $title = clean_title(basename(dirname(__FILE__))); }
 <div class="wrap">
 <?php
 
-// FUNCTION FOR CHECKING MOBILE PLATFORM
+// NAME GENERATION FOR PDF IMAGE VIEW
 
-function isMobileDevice() {
-    return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"]);
+function generateRandomString($length = 3) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    return $randomString;
 }
+
+$pdfName = generateRandomString();
+
 
 // FUNCTIONS TO MAKE THE MAGIC HAPPEN, BEST TO LEAVE THESE ALONE
 function clean_title($title)
@@ -196,17 +207,17 @@ function display_block( $file )
     	$rtn .= "	<div class=\"name\">";
 	}
      elseif ($file_ext === "pdf") {
-         if (isMobileDevice())	{
-	   	$rtn = "<div class=\"block\">";
-    	$rtn .= "<a href=\"$file\" class=\"$file_ext\"{$download_att}>";
-    	$rtn .= "	<div class=\"img $file_ext\"></div>";
-    	$rtn .= "	<div class=\"name\">";
-	    } else {
+        //if ($pdf_view === TRUE) {
 	   	$rtn = "<div class=\"block\">";
     	$rtn .= "<a href=\"javascript:void(0);\" onclick=\"makePdf('$file')\" class=\"$file_ext\"{$download_att}>";
     	$rtn .= "	<div class=\"img $file_ext\"></div>";
     	$rtn .= "	<div class=\"name\">";
-    	}
+        //} else {
+        //$rtn = "<div class=\"block\">";
+    	//$rtn .= "<a href=\"$file\" class=\"$file_ext\"{$download_att}>";
+    	//$rtn .= "	<div class=\"img $file_ext\"></div>";
+    	//$rtn .= "	<div class=\"name\">";
+        //}
 	}
 	 elseif ($file_ext === "jpg" OR $file_ext == "png" OR $file_ext == "gif" OR$file_ext == "webp") {
         $rtn = "<div class=\"block\">";
@@ -349,8 +360,9 @@ $items = scandir( dirname(__FILE__) );
 build_blocks( $items, false );
 ?>
 
-<?php if($toggle_sub_folders) { ?>
 <script type="text/javascript">
+
+<?php if($toggle_sub_folders) { ?>
 	$(document).ready(function() 
 	{
 		$("a.dir").click(function(e)
@@ -360,14 +372,16 @@ build_blocks( $items, false );
 			e.preventDefault();
 		});
 	});
-	
+
+<?php } ?>
+
 function makeVid(selecto)
 {
     var div = document.createElement("div");
     div.className = "modal";
     div.id = "vide";
 
-    div.innerHTML = `<div class=\"modal-content\" id=\"videchild\"> <video width=\"100%\" controls> <source src='${selecto}'' type=\"video/mp4\" id=\"vid\"> Your browser does not support the video tag. </video> </div>`;
+    div.innerHTML = `<div class=\"modal-content\" id=\"videchild\"> <video width=\"100%\" controls> <source src='${selecto}' type=\"video/mp4\" id=\"vid\"> Your browser does not support the video tag. </video> </div>`;
  // BY THE POWER OF THE ULTIMATE INVINCIBLE MAJESTIC FaSciCakeᵃⁿᵈ ᵍᵒᵒᵍˡᵉ THIS IS WORKING
     div.addEventListener('click', function(event) {
         if (event.target.closest("#videchild"))
@@ -386,7 +400,9 @@ function makePdf(selecto)
     div.className = "modal";
     div.id = "pide";
 
-    div.innerHTML = `<div class=\"modal-content\" id=\"pidechild\"> <object data='${selecto}'' type=\"application/pdf\" style=\"height: 100vh; width: 100%; margin : 0px\" id=\"pdf\" ></object> </div>`;
+    div.innerHTML = `<div class=\"modal-content\" id=\"pidechild\"> Loading... <iframe src="pdf.php?file=''${selecto}''&name=<?php echo $pdfName; ?>&page=0" style=\"overflow-x: hidden; max-width: 100%; max-height: 93vh; margin: auto;\" id=\"pdf\" onload=\"resizeIframe(this)\"></object> </div>`;
+    
+    
     div.addEventListener('click', function(event) {
         if (event.target.closest("#pidechild"))
         return
@@ -397,6 +413,18 @@ function makePdf(selecto)
 
     document.getElementById("main").appendChild(div);
 }
+// pdf images can have different heights, and i couldn't figure out how to call this when the image loads, so do it periodically
+function resizeIframe(obj) {
+    (function loop() {
+  setTimeout(function () {
+    obj.style.height = obj.contentWindow.document.documentElement.scrollHeight-100 + 'px';
+    obj.style.width = obj.contentWindow.document.documentElement.scrollWidth+10+'px';
+
+    
+    loop()
+  }, 500);
+}());
+  }
 
         
 function makeImg(selecto)
@@ -423,7 +451,6 @@ function removeVid() {
     
 }
 </script>
-<?php } ?>
 </div>
 </body>
 </html>
