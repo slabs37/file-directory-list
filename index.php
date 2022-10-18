@@ -38,6 +38,7 @@ Free PHP File Directory Listing Script - Version 1.10
 	// ENABLE PDF TO IMAGE VIEWING
 	$pdf_view = true;
 	
+
 // SET TITLE BASED ON FOLDER NAME, IF NOT SET ABOVE
 if( !$title ) { $title = clean_title(basename(dirname(__FILE__))); }
 ?>
@@ -123,13 +124,44 @@ if( !$title ) { $title = clean_title(basename(dirname(__FILE__))); }
   border-radius: 10px;
   width: 95%; /* Could be more or less, depending on screen size */
 }
+
+.button-switch {
+    border-radius: 12px;
+    background-color: #206ba4;
+    border: none;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 2vw;
+    margin: 4px 2px;
+    cursor: pointer;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 30vw;
+}
 	</style>
 </head>
 <body class="<?php echo $color; ?>" id="main">
 <div class="wrap">
+    
+<?php //PLACE BUTTON FOR SWITCHING BETWEEN DOWNLOAD MODE AND VIEW MODE ?>
+<h1 style="font-size:4.5rem;font-weight:300;line-height:1.1"><?php echo basename(dirname(__FILE__)); ?> <button class="button-switch" onclick="location.href='<?php if ( isset($_GET['dl']) ) { echo strtok("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}", "?"); } else { echo strtok("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}", "?"); echo "?dl"; } ?>'" type="button">
+         <?php if ( isset($_GET['dl']) ) { echo "switch to view mode"; } else { echo "switch to download mode"; } ?></button> </h1>
+         
 <?php
 
+
+
 // NAME GENERATION FOR PDF IMAGE VIEW
+
+	//  DOWNLOAD MODE CHECK
+
+if ( isset($_GET['dl']) ) {
+    $viewMode = false;
+} else { $viewMode = true;};
 
 function generateRandomString($length = 3) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -142,7 +174,6 @@ function generateRandomString($length = 3) {
 }
 
 $pdfName = generateRandomString();
-
 
 // FUNCTIONS TO MAKE THE MAGIC HAPPEN, BEST TO LEAVE THESE ALONE
 function clean_title($title)
@@ -190,7 +221,7 @@ function get_directory_size($path)
 // SHOW THE MEDIA BLOCK
 function display_block( $file )
 {
-	global $ignore_file_list, $ignore_ext_list, $pdf_view, $force_download;
+	global $ignore_file_list, $ignore_ext_list, $pdf_view, $force_download, $viewMode;
 	
 	$file_ext = ext($file);
 	if( !$file_ext AND is_dir($file)) $file_ext = "dir";
@@ -199,14 +230,14 @@ function display_block( $file )
 	
 	$download_att = ($force_download AND $file_ext != "dir" ) ? " download='" . basename($file) . "'" : "";
 	
-	if ($file_ext === "mp4" OR $file_ext === "webm")
+	if (($file_ext === "mp4" OR $file_ext === "webm") AND $viewMode)
 	{
 	   	$rtn = "<div class=\"block\">";
     	$rtn .= "<a href=\"javascript:void(0);\" onclick=\"makeVid('$file')\" class=\"$file_ext\"{$download_att}>";
     	$rtn .= "	<div class=\"img $file_ext\"></div>";
     	$rtn .= "	<div class=\"name\">";
 	}
-     elseif ($file_ext === "pdf") {
+     elseif (($file_ext === "pdf") AND $viewMode) {
         if ($pdf_view) {
 	   	$rtn = "<div class=\"block\">";
     	$rtn .= "<a href=\"javascript:void(0);\" onclick=\"makePdf('$file')\" class=\"$file_ext\"{$download_att}>";
@@ -219,19 +250,19 @@ function display_block( $file )
     	$rtn .= "	<div class=\"name\">";
         }
 	}
-	 elseif ($file_ext === "jpg" OR $file_ext == "png" OR $file_ext == "gif" OR$file_ext == "webp") {
+	 elseif (($file_ext === "jpg" OR $file_ext == "png" OR $file_ext == "gif" OR $file_ext == "webp") AND $viewMode) {
         $rtn = "<div class=\"block\">";
     	$rtn .= "<a href=\"javascript:void(0);\" onclick=\"makeImg('$file')\" class=\"$file_ext\"{$download_att}>";
     	$rtn .= "	<div class=\"img $file_ext\"></div>";
     	$rtn .= "	<div class=\"name\">";
     }
-    elseif ($file_ext === "mp3" OR $file_ext === "wav" OR $file_ext === "ogg")
-    {
+    elseif (($file_ext === "mp3" OR $file_ext === "wav" OR $file_ext === "ogg") AND $viewMode)
+     {
     	$rtn = "<div class=\"block\">";
     	$rtn .= "<a href=\"javascript:void(0);\" onclick=\"makeVid('$file')\" class=\"$file_ext\"{$download_att}>";
     	$rtn .= "	<div class=\"img $file_ext\"></div>";
     	$rtn .= "	<div class=\"name\">";
-    }
+     }
 	else {
 	
     	$rtn = "<div class=\"block\">";
@@ -239,7 +270,6 @@ function display_block( $file )
     	$rtn .= "	<div class=\"img $file_ext\"></div>";
     	$rtn .= "	<div class=\"name\">";
 	}
-	
 	if ($file_ext === "dir") 
 	{
 		$rtn .= "		<div class=\"file fs-1-2 bold\">" . basename($file) . "</div>";
@@ -359,7 +389,6 @@ function build_blocks( $items, $folder )
 $items = scandir( dirname(__FILE__) );
 build_blocks( $items, false );
 ?>
-
 <script type="text/javascript">
 
 <?php if($toggle_sub_folders) { ?>
