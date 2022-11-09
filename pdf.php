@@ -23,8 +23,8 @@ echo "<pre>$output</pre>";
 <html>
     <img id="imga" src="" style="overflow-x: hidden; display: block; margin-left: auto; margin-right: auto;"> </img> 
     <div>
-	    <button id="go_previous">prev &#x25c0;</button>
-	    <button id="go_next">next &#x25ba;</button>
+	    <button id="go_previous" style="position: fixed;  top: 95%;  left: 45%;  transform: translate(-50%, -50%); background-color: #206ba4; border-radius: 50px; color: white;">&#x25c0; prev</button>
+	    <button id="go_next" style="position: fixed;  top: 95%;  left: 55%;  transform: translate(-50%, -50%); background-color: #206ba4; border-radius: 50px; color: white;">next &#x25ba;</button>
         </div> 
         
         <?php //this calls a script which deletes the temporary files 10 minutes after creation ?>
