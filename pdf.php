@@ -24,6 +24,7 @@ echo "<pre>$output</pre>";
     <img id="imga" src="" style="overflow-x: hidden; display: block; margin-left: auto; margin-right: auto;"> </img> 
     <div>
 	    <button id="go_previous" style="position: fixed;  top: 95%;  left: 45%;  transform: translate(-50%, -50%); background-color: #206ba4; border-radius: 50px; color: white;">&#x25c0; prev</button>
+	    <div id="page_num" style="position: fixed;  top: 95%;  left: 50%;  transform: translate(-50%, -50%); background-color: #206ba4; border-radius: 10px; color: white;"><?php echo $_GET['page']+1 ?></div>
 	    <button id="go_next" style="position: fixed;  top: 95%;  left: 55%;  transform: translate(-50%, -50%); background-color: #206ba4; border-radius: 50px; color: white;">next &#x25ba;</button>
         </div> 
         
@@ -34,19 +35,17 @@ echo "<pre>$output</pre>";
 var tmpName = getUrlVars()["name"];
 document.getElementById("imga").src = "pdftmp/"+tmpName+".jpg";
 
-    function getUrlVars() {
+function getUrlVars() {
     var vars = {};
     var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
         vars[key] = value;
     });
     return vars;
-    }
-    
+}
     
 var file = getUrlVars()["file"];
 var name = getUrlVars()["name"];
 var page = getUrlVars()["page"];
-
 
 
     document.getElementById('go_previous').addEventListener('click', (e) => {
