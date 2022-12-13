@@ -16,6 +16,21 @@ if (isset($_GET['file'])) {
 
 $output = shell_exec("$command 2>&1");
 echo "<pre>$output</pre>";
+
+//check if requested page num is more than available pages
+
+preg_match('/file: \d+/', $output, $int_var);
+$in_var = preg_replace('/[^0-9]/', '', $int_var[0]);  
+$pagae = $in_var-1;
+    if ($in_var !== '') {
+    
+    $newurl = "pdf.php".'?file='.$file.'&name='.$name.'&page='.$pagae.'';
+    
+    echo '<script>window.location.href="'.$newurl.'"</script>';
+    
+    }
+
+
 } else {
     die();
 }
