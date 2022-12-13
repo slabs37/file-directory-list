@@ -15,7 +15,8 @@ if (isset($_GET['file'])) {
     $command = "convert -units PixelsPerInch -density 150 -colorspace sRGB -flatten -quality 50 '{$file}[{$page}]' pdftmp/'$name'.jpg";
 
 $output = shell_exec("$command 2>&1");
-echo "<pre>$output</pre>";
+//since this is being executed when checking for page overflow, it's no use to call it with echo anymore
+//echo "<pre>$output</pre>";
 
 //check if requested page num is more than available pages
 
@@ -41,7 +42,7 @@ $pagae = $in_var-1;
     <div>
 	    <button id="go_previous" style="position: fixed;  top: 95%;  left: 43%;  transform: translate(-50%, -50%); background-color: #206ba4; border-radius: 50px; color: white;">&#x25c0; prev</button>
 	    
-	    <input style="-webkit-appearance: none; margin: 0; -moz-appearance:textfield; position: fixed;  top: 95%;  left: 50%;  transform: translate(-50%, -50%); background-color: #206ba4; border-radius: 10px; color: white; width: 2em; text-align: center;" onkeydown="goPage(this)" value="<?php echo $_GET['page']+1 ?>" >
+	    <input style="-webkit-appearance: none; margin: 0; -moz-appearance:textfield; position: fixed;  top: 95%;  left: 50%;  transform: translate(-50%, -50%); background-color: #206ba4; border-radius: 10px; color: white; width: 3em; text-align: center;" onkeydown="goPage(this)" value="<?php echo $_GET['page']+1 ?>" >
 
 	    <button id="go_next" style="position: fixed;  top: 95%;  left: 58%;  transform: translate(-50%, -50%); background-color: #206ba4; border-radius: 50px; color: white;">next &#x25ba;</button>
         </div> 
