@@ -27,7 +27,7 @@ Free PHP File Directory Listing Script - Version 1.10
 ";
 	
 	// TOGGLE SUB FOLDERS, SET TO false IF YOU WANT OFF
-	$toggle_sub_folders = false;
+	$toggle_sub_folders = true;
 	
 	// FORCE DOWNLOAD ATTRIBUTE
 	$force_download = false;
@@ -50,10 +50,11 @@ if( !$title ) { $title = clean_title(basename(dirname(__FILE__))); }
 	<link rel='shortcut icon' type='image/x-icon' href='../favicon.ico' />
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0, viewport-fit=cover user-scalable=yes">
-	<!-- for folder function <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
-
+	<!--
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    
 	<link href="//fonts.googleapis.com/css?family=Lato:400,900" rel="stylesheet" type="text/css" />
-		-->
+	-->
 	<style>
 		*, *:before, *:after { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
 		body { background: #dadada; font-family: "Lato", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; font-weight: 400; font-size: 14px; line-height: 18px; padding: 0; margin: 0; text-align: center;}
@@ -142,6 +143,25 @@ if( !$title ) { $title = clean_title(basename(dirname(__FILE__))); }
     right: 0;
     width: 30vw;
 }
+
+.button-exit {
+    border-radius: 20px;
+    background-color: #206ba4;
+    opacity: 0.75;
+    border: none;
+    color: white;
+    padding: 2px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 2vw;
+    margin: 4px 2px;
+    cursor: pointer;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 3vw;
+}
 	</style>
 </head>
 <body class="<?php echo $color; ?>" id="main">
@@ -155,14 +175,16 @@ if( !$title ) { $title = clean_title(basename(dirname(__FILE__))); }
 
 
 
-// NAME GENERATION FOR PDF IMAGE VIEW
 
-	//  DOWNLOAD MODE CHECK
+
+//  DOWNLOAD MODE CHECK
 
 if ( isset($_GET['dl']) ) {
     $viewMode = false;
 } else { $viewMode = true;};
 
+
+// NAME GENERATION FOR PDF IMAGE VIEW
 function generateRandomString($length = 3) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $charactersLength = strlen($characters);
@@ -256,7 +278,7 @@ function display_block( $file )
     	$rtn .= "	<div class=\"img $file_ext\"></div>";
     	$rtn .= "	<div class=\"name\">";
     }
-    elseif (($file_ext === "mp3" OR $file_ext === "wav" OR $file_ext === "ogg") AND $viewMode)
+    elseif (($file_ext === "mp3" OR $file_ext === "wav" OR $file_ext === "ogg" OR $file_ext === "opus") AND $viewMode)
      {
     	$rtn = "<div class=\"block\">";
     	$rtn .= "<a href=\"javascript:void(0);\" onclick=\"makeVid('$file')\" class=\"$file_ext\"{$download_att}>";
@@ -410,7 +432,7 @@ function makeVid(selecto)
     div.className = "modal";
     div.id = "vide";
 
-    div.innerHTML = `<div class=\"modal-content\" id=\"videchild\"> <video width=\"100%\" controls> <source src='${selecto}' type=\"video/mp4\" id=\"vid\"> Your browser does not support the video tag. </video> </div>`;
+    div.innerHTML = `<div class=\"modal-content\" id=\"videchild\"> <button class=\"button-exit\" onclick=\"vide.remove();\">X</button> <video width=\"100%\" controls> <source src='${selecto}' type=\"video/mp4\" id=\"vid\"> Your browser does not support the video tag. </video> </div>`;
  // BY THE POWER OF THE ULTIMATE INVINCIBLE MAJESTIC FaSciCakeᵃⁿᵈ ᵍᵒᵒᵍˡᵉ THIS IS WORKING
     div.addEventListener('click', function(event) {
         if (event.target.closest("#videchild"))
@@ -429,7 +451,7 @@ function makePdf(selecto)
     div.className = "modal";
     div.id = "pide";
 
-    div.innerHTML = `<div class=\"modal-content\" id=\"pidechild\"> Loading... <iframe src="pdf.php?file=''${selecto}''&name=<?php echo $pdfName; ?>&page=0" style=\"overflow-x: hidden; max-width: 100%; max-height: 93vh; margin: auto;\" id=\"pdf\" onload=\"resizeIframe(this)\"></object> </div>`;
+    div.innerHTML = `<div class=\"modal-content\" id=\"pidechild\"> <button class=\"button-exit\" onclick=\"pide.remove();\">X</button> Initial loading may take a little bit <br> <iframe src="pdf.php?file=''${selecto}''&name=<?php echo $pdfName; ?>&page=0" style=\"overflow-x: hidden; max-width: 100%; max-height: 92vh; margin: auto;\" id=\"pdf\" onload=\"resizeIframe(this)\"></object> </div>`;
     
     
     div.addEventListener('click', function(event) {
@@ -460,25 +482,20 @@ function makeImg(selecto)
 {
     var div = document.createElement("div");
     div.className = "modal";
-    div.id = "pide";
+    div.id = "mide";
 
-    div.innerHTML = `<div class=\"modal-content\" id=\"pidechild\"> <img src='${selecto}' style=\"max-width: 100%; max-height: 100vh; margin: auto;\"> </img> </div>`;
+    div.innerHTML = `<div class=\"modal-content\" id=\"midechild\"> <button class=\"button-exit\" onclick=\"mide.remove();\">X</button> <img src='${selecto}' style=\"max-width: 100%; max-height: 100vh; margin: auto;\"> </img> </div>`;
     div.addEventListener('click', function(event) {
-        if (event.target.closest("#pidechild"))
+        if (event.target.closest("#midechild"))
         return
 
-        var modal = document.getElementById('pide');
+        var modal = document.getElementById('mide');
         modal.remove();
     })
 
     document.getElementById("main").appendChild(div);
 }
 
-function removeVid() {
-    var modal = document.getElementById('vide');
-    modal.remove();
-    
-}
 </script>
 </div>
 </body>
