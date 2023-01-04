@@ -11,15 +11,18 @@ if (isset($_GET['name'])) {
 
 if (isset($_GET['file'])) {
     $file = $_GET['file'];
+    
+    if (!file_exists('pdftmp/')) {
+        mkdir('pdftmp/', 0777, true);
+    }
 
     $command = "convert -units PixelsPerInch -density 150 -colorspace sRGB -flatten -quality 50 '{$file}[{$page}]' pdftmp/'$name'.jpg";
 
 $output = shell_exec("$command 2>&1");
-//since this is being executed when checking for page overflow, it's no use to call it with echo anymore
-//echo "<pre>$output</pre>";
+
 
 //check if requested page num is more than available pages
-
+// by grabbing reported pages in ImageMagick error when we load page which doesn't exist
 preg_match('/file: \d+/', $output, $int_var);
 $in_var = preg_replace('/[^0-9]/', '', $int_var[0]);  
 $pagae = $in_var-1;
@@ -38,22 +41,23 @@ $pagae = $in_var-1;
 
 ?>
 <html>
-    <img id="imga" src="" style="overflow-x: hidden; display: block; margin-left: auto; margin-right: auto;"> </img> 
+    <img id="imga" src=<?php //show images with base64 data so that we can delete the temp files quickly
+    $FilePath = "pdftmp/".$name.".jpg"; 
+    $data = base64_encode(file_get_contents($FilePath));
+    echo '"data:image/gif;base64,' . $data . '"'; 
+    unlink($FilePath);
+    ?> style="overflow-x: hidden; display: block; margin-left: auto; margin-right: auto;"> </img> 
     <div>
-	    <button id="go_previous" style="position: fixed;  top: 95%;  left: 43%;  transform: translate(-50%, -50%); background-color: #206ba4; border-radius: 50px; color: white;">&#x25c0; prev</button>
+	    <button id="go_previous" style="position: fixed;  top: 95%;  left: 32%;  transform: translate(-50%, -50%); background-color: #206ba4; border-radius: 50px; color: white;">&#x25c0; prev</button>
 	    
 	    <input style="-webkit-appearance: none; margin: 0; -moz-appearance:textfield; position: fixed;  top: 95%;  left: 50%;  transform: translate(-50%, -50%); background-color: #206ba4; border-radius: 10px; color: white; width: 3em; text-align: center;" onkeydown="goPage(this)" value="<?php echo $_GET['page']+1 ?>" >
 
-	    <button id="go_next" style="position: fixed;  top: 95%;  left: 58%;  transform: translate(-50%, -50%); background-color: #206ba4; border-radius: 50px; color: white;">next &#x25ba;</button>
+	    <button id="go_next" style="position: fixed;  top: 95%;  left: 68%;  transform: translate(-50%, -50%); background-color: #206ba4; border-radius: 50px; color: white;">next &#x25ba;</button>
         </div> 
+    
         
-        <?php //this calls a script which deletes the temporary files 10 minutes after creation ?>
-        <iframe id="iframe" src="./pdftmp/delfile.php" hidden> </iframe>
         
 <script>
-var tmpName = getUrlVars()["name"];
-document.getElementById("imga").src = "pdftmp/"+tmpName+".jpg";
-
 function getUrlVars() {
     var vars = {};
     var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
@@ -88,31 +92,5 @@ var page = getUrlVars()["page"];
     }
 }
     
-
- 
-// Calling function
-// set the path to check
-    var result = checkFileExist("./pdftmp/"+name+".jpg");
- 
-if (result == true) {
-} else {
-    window.location.reload(true);
-}
-    
-    setTimeout(function(){
-    document.getElementById('iframe').remove();
-    },500);
-
-    function checkFileExist(urlToFile) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('HEAD', urlToFile, false);
-    xhr.send();
-     
-    if (xhr.status == "404") {
-        return false;
-    } else {
-        return true;
-    }
-}
 </script>
 </html>
