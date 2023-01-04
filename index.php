@@ -13,7 +13,7 @@ Free PHP File Directory Listing Script - Version 1.10
 	$color	= "light";
 	
 	// ADD SPECIFIC FILES YOU WANT TO IGNORE HERE
-	$ignore_file_list = array( ".htaccess", "Thumbs.db", ".DS_Store", "index.php", "pdf.php", "error_log", "pdftmp" );
+	$ignore_file_list = array( ".htaccess", "Thumbs.db", ".DS_Store", "index.php", "pdf.php", "error_log" );
 	
 	// ADD SPECIFIC FILE EXTENSIONS YOU WANT TO IGNORE HERE, EXAMPLE: array('psd','jpg','jpeg', )
 	$ignore_ext_list = array( );
