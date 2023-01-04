@@ -11,12 +11,8 @@ if (isset($_GET['name'])) {
 
 if (isset($_GET['file'])) {
     $file = $_GET['file'];
-    
-    if (!file_exists('pdftmp/')) {
-        mkdir('pdftmp/', 0777, true);
-    }
 
-    $command = "convert -units PixelsPerInch -density 150 -colorspace sRGB -flatten -quality 50 '{$file}[{$page}]' pdftmp/'$name'.jpg";
+    $command = "convert -units PixelsPerInch -density 150 -colorspace sRGB -flatten -quality 50 '{$file}[{$page}]' '$name'.jpg";
 
 $output = shell_exec("$command 2>&1");
 
@@ -42,9 +38,9 @@ $pagae = $in_var-1;
 ?>
 <html>
     <img id="imga" src=<?php //show images with base64 data so that we can delete the temp files quickly
-    $FilePath = "pdftmp/".$name.".jpg"; 
+    $FilePath = $name.".jpg"; 
     $data = base64_encode(file_get_contents($FilePath));
-    echo '"data:image/gif;base64,' . $data . '"'; 
+    echo '"data:image/jpg;base64,' . $data . '"'; 
     unlink($FilePath);
     ?> style="overflow-x: hidden; display: block; margin-left: auto; margin-right: auto;"> </img> 
     <div>
