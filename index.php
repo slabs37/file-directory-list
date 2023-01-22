@@ -72,7 +72,7 @@ if( !$title ) { $title = clean_title(basename(dirname(__FILE__))); }
 		.block a:hover, .block a.open { text-decoration: none; background: #efefef; }
 		.bold { font-weight: 900; }
 		.upper { text-transform: uppercase; }
-		.fs-1 { font-size: 1em; } .fs-1-1 { font-size: 1.1em; } .fs-1-2 { font-size: 1.2em; } .fs-1-3 { font-size: 1.3em; } .fs-0-9 { font-size: 0.9em; } .fs-0-8 { font-size: 0.8em; } .fs-0-7 { font-size: 0.7em; }
+		.fs-1 { font-size: 1em; } .fs-1-1 { font-size: 1.1em; } .fs-1-2 { font-size: 1.2em; } .fs-1-3 { font-size: 1.3em; } .fs-0-9 { font-size: 0.9em; } .fs-0-8 { font-size: 0.8em; } .fs-0-7 { font-size: 0.7em; } .fs-0-3 { font-size: 0.3em; } .fs-2 { font-size: 2em; }
 		
 		.jpg, .jpeg, .gif, .png, .webp { background-position: -50px 0 !important; } 
 		.pdf { background-position: -100px 0 !important; }  
@@ -127,7 +127,7 @@ if( !$title ) { $title = clean_title(basename(dirname(__FILE__))); }
     }
 
     .button-switch {
-        border-radius: 12px;
+        border-radius: 10px;
         background-color: #206ba4;
         border: none;
         color: white;
@@ -135,7 +135,6 @@ if( !$title ) { $title = clean_title(basename(dirname(__FILE__))); }
         text-align: center;
         text-decoration: none;
         display: inline-block;
-        font-size: 2vw;
         margin: 4px 2px;
         cursor: pointer;
         position: fixed;
@@ -162,14 +161,34 @@ if( !$title ) { $title = clean_title(basename(dirname(__FILE__))); }
         width: 3vh;
         height: 3vh;
     }
+    
+    .loader {
+      border: 2vh solid #f3f3f3; /* Light grey */
+      border-top: 2vh solid #206ba4;
+      border-radius: 50%;
+      width: 25vh;
+      height: 25vh;
+      margin: auto;
+      margin-top:10%;
+     animation: spin 2s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 	</style>
 </head>
 <body class="<?php echo $color; ?>" id="main">
 <div class="wrap">
     
 <?php //PLACE BUTTON FOR SWITCHING BETWEEN DOWNLOAD MODE AND VIEW MODE ?>
-<h1 style="font-size:4.5rem;font-weight:300;line-height:1.1"><?php echo basename(dirname(__FILE__)); ?> <button class="button-switch" onclick="location.href='<?php if ( isset($_GET['dl']) ) { echo strtok("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}", "?"); } else { echo strtok("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}", "?"); echo "?dl"; } ?>'" type="button">
-         <?php if ( isset($_GET['dl']) ) { echo "switch to view mode"; } else { echo "switch to download mode"; } ?></button> </h1>
+
+<h1>
+    <div class="fs-2"> <?php echo basename(dirname(__FILE__)); ?> </div>
+    <button class="button-switch fs-1 bold" onclick="location.href='<?php if ( isset($_GET['dl']) ) { echo strtok("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}", "?"); } else { echo strtok("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}", "?"); echo "?dl"; } ?>'" type="button">
+    <?php if ( isset($_GET['dl']) ) { echo "switch to view mode"; } else { echo "switch to download mode"; } ?></button> 
+</h1>
          
 <?php
 
@@ -438,7 +457,7 @@ function makeVid(selecto)
     div.className = "modal";
     div.id = "vide";
 
-    div.innerHTML = `<div class=\"modal-content\" id=\"videchild\"> <button class=\"button-exit\" onclick=\"removeModal(\'vide\');\">X</button> <video width=\"100%\" controls> <source src='${selecto}' type=\"video/mp4\" id=\"vid\"> Your browser does not support the video tag. </video> </div>`;
+    div.innerHTML = `<div class=\"modal-content\" id=\"videchild\"> <button class=\"button-exit\" onclick=\"removeModal(\'vide\');\">X</button> <video width=\"100%\" style=\"border-radius: 10px\" controls> <source src='${selecto}' type=\"video/mp4\" id=\"vid\"> Your browser does not support the video tag. </video> </div>`;
  // BY THE POWER OF THE ULTIMATE INVINCIBLE MAJESTIC FaSciCakeᵃⁿᵈ ᵍᵒᵒᵍˡᵉ THIS IS WORKING
     div.addEventListener('click', function(event) {
         if (event.target.closest("#videchild"))
@@ -457,7 +476,7 @@ function makePdf(selecto)
     div.className = "modal";
     div.id = "pide";
 
-    div.innerHTML = `<div class=\"modal-content\" id=\"pidechild\"> <button class=\"button-exit\" onclick=\"removeModal(\'pide\');\">X</button> Initial loading may take a little bit <br> <iframe src="pdf.php?file=''${selecto}''&name=<?php echo $pdfName; ?>&page=0" style=\"overflow-x: hidden; max-width: 100%; max-height: 92vh; object-fit: contain; border: 0px; width:90vw;\" id=\"pdf\" onload=\"resizeIframe(this)\"></object> </div>`;
+    div.innerHTML = `<div class=\"modal-content\" id=\"pidechild\"> <button class=\"button-exit\" onclick=\"removeModal(\'pide\');\">X</button> <div id=\"loadtext\" class=\"fs-1-2\">Loading PDF to server...<div class=\"loader\"></div></div> <br> <iframe src="pdf.php?file=''${selecto}''&name=<?php echo $pdfName; ?>&page=0" style=\"overflow-x: hidden; max-width: 100%; max-height: 92vh; object-fit: contain; border: 0px; width:90vw;\" id=\"pdf\" onload=\"resizeIframe(this); loadtext.remove();\"></object> </div>`;
     
     
     div.addEventListener('click', function(event) {
@@ -490,7 +509,7 @@ function makeImg(selecto)
     div.className = "modal";
     div.id = "mide";
 
-    div.innerHTML = `<div class=\"modal-content\" id=\"midechild\"> <button class=\"button-exit\" onclick=\"removeModal(\'mide\');\">X</button> <img src='${selecto}' style=\"max-width: 100%; max-height: 100vh; margin: auto;\"> </img> </div>`;
+    div.innerHTML = `<div class=\"modal-content\" id=\"midechild\"> <button class=\"button-exit\" onclick=\"removeModal(\'mide\');\">X</button> <img src='${selecto}' style=\"max-width: 100%; max-height: 100vh; margin: auto; border-radius: 10px\"> </img> </div>`;
     div.addEventListener('click', function(event) {
         if (event.target.closest("#midechild"))
         return
