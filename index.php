@@ -105,63 +105,63 @@ if( !$title ) { $title = clean_title(basename(dirname(__FILE__))); }
 		body.dark .block .data { color: #fff; }
 		body.dark .sub { border-left: solid 5px #0e0e0e; }
 		
-.modal {
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
+    .modal {
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
 
-.modal-content {
-  background-color: #fefefe;
-  margin: 1% auto; /* 15% from the top and centered */
-  padding: 10px;
-  border: 1px solid #888;
-  border-radius: 10px;
-  width: 95%; /* Could be more or less, depending on screen size */
-}
+    .modal-content {
+      background-color: <?php if ($color == dark) { echo '#1d1c1c'; } else { echo '#fefefe'; }; ?>;
+      margin: 1% auto; /* 15% from the top and centered */
+      padding: 2px;
+      border: 1px solid #0a0a0a;
+      border-radius: 10px;
+      width: 95%; /* Could be more or less, depending on screen size */
+    }
 
-.button-switch {
-    border-radius: 12px;
-    background-color: #206ba4;
-    border: none;
-    color: white;
-    padding: 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 2vw;
-    margin: 4px 2px;
-    cursor: pointer;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    width: 30vw;
-}
-
-.button-exit {
-    border-radius: 20px;
-    background-color: #206ba4;
-    opacity: 0.75;
-    border: none;
-    color: white;
-    padding: 2px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 2vw;
-    margin: 4px 2px;
-    cursor: pointer;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 3vw;
-}
+    .button-switch {
+        border-radius: 12px;
+        background-color: #206ba4;
+        border: none;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 2vw;
+        margin: 4px 2px;
+        cursor: pointer;
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 30vw;
+    }
+    
+    .button-exit {
+        border-radius: 50%;
+        background-color: #206ba4;
+        opacity: 0.75;
+        border: none;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 2.5vh;
+        margin: 4px 4px;
+        cursor: pointer;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 3vh;
+        height: 3vh;
+    }
 	</style>
 </head>
 <body class="<?php echo $color; ?>" id="main">
@@ -426,20 +426,25 @@ build_blocks( $items, false );
 
 <?php } ?>
 
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.getElementById("main").classList.remove('light');
+    document.getElementById("main").classList.add('dark');
+}
+
 function makeVid(selecto)
 {
+    document.getElementById('main').style="overflow: hidden";
     var div = document.createElement("div");
     div.className = "modal";
     div.id = "vide";
 
-    div.innerHTML = `<div class=\"modal-content\" id=\"videchild\"> <button class=\"button-exit\" onclick=\"vide.remove();\">X</button> <video width=\"100%\" controls> <source src='${selecto}' type=\"video/mp4\" id=\"vid\"> Your browser does not support the video tag. </video> </div>`;
+    div.innerHTML = `<div class=\"modal-content\" id=\"videchild\"> <button class=\"button-exit\" onclick=\"removeModal(\'vide\');\">X</button> <video width=\"100%\" controls> <source src='${selecto}' type=\"video/mp4\" id=\"vid\"> Your browser does not support the video tag. </video> </div>`;
  // BY THE POWER OF THE ULTIMATE INVINCIBLE MAJESTIC FaSciCakeᵃⁿᵈ ᵍᵒᵒᵍˡᵉ THIS IS WORKING
     div.addEventListener('click', function(event) {
         if (event.target.closest("#videchild"))
         return
 
-        var modal = document.getElementById('vide');
-        modal.remove();
+        removeModal("vide");
     })
 
     document.getElementById("main").appendChild(div);
@@ -447,19 +452,19 @@ function makeVid(selecto)
 
 function makePdf(selecto)
 {
+    document.getElementById('main').style="overflow: hidden";
     var div = document.createElement("div");
     div.className = "modal";
     div.id = "pide";
 
-    div.innerHTML = `<div class=\"modal-content\" id=\"pidechild\"> <button class=\"button-exit\" onclick=\"pide.remove();\">X</button> Initial loading may take a little bit <br> <iframe src="pdf.php?file=''${selecto}''&name=<?php echo $pdfName; ?>&page=0" style=\"overflow-x: hidden; max-width: 100%; max-height: 92vh; margin: auto;\" id=\"pdf\" onload=\"resizeIframe(this)\"></object> </div>`;
+    div.innerHTML = `<div class=\"modal-content\" id=\"pidechild\"> <button class=\"button-exit\" onclick=\"removeModal(\'pide\');\">X</button> Initial loading may take a little bit <br> <iframe src="pdf.php?file=''${selecto}''&name=<?php echo $pdfName; ?>&page=0" style=\"overflow-x: hidden; max-width: 100%; max-height: 92vh; object-fit: contain; border: 0px; width:90vw;\" id=\"pdf\" onload=\"resizeIframe(this)\"></object> </div>`;
     
     
     div.addEventListener('click', function(event) {
         if (event.target.closest("#pidechild"))
         return
 
-        var modal = document.getElementById('pide');
-        modal.remove();
+        removeModal("pide");
     })
 
     document.getElementById("main").appendChild(div);
@@ -468,8 +473,8 @@ function makePdf(selecto)
 function resizeIframe(obj) {
     (function loop() {
   setTimeout(function () {
-    obj.style.height = obj.contentWindow.document.documentElement.scrollHeight-100 + 'px';
-    obj.style.width = obj.contentWindow.document.documentElement.scrollWidth+10+'px';
+    obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+
 
     
     loop()
@@ -480,20 +485,26 @@ function resizeIframe(obj) {
         
 function makeImg(selecto)
 {
+    document.getElementById('main').style="overflow: hidden";
     var div = document.createElement("div");
     div.className = "modal";
     div.id = "mide";
 
-    div.innerHTML = `<div class=\"modal-content\" id=\"midechild\"> <button class=\"button-exit\" onclick=\"mide.remove();\">X</button> <img src='${selecto}' style=\"max-width: 100%; max-height: 100vh; margin: auto;\"> </img> </div>`;
+    div.innerHTML = `<div class=\"modal-content\" id=\"midechild\"> <button class=\"button-exit\" onclick=\"removeModal(\'mide\');\">X</button> <img src='${selecto}' style=\"max-width: 100%; max-height: 100vh; margin: auto;\"> </img> </div>`;
     div.addEventListener('click', function(event) {
         if (event.target.closest("#midechild"))
         return
-
-        var modal = document.getElementById('mide');
-        modal.remove();
+        
+        removeModal("mide");
     })
 
     document.getElementById("main").appendChild(div);
+}
+
+function removeModal(name) {
+        var modal = document.getElementById(name);
+        modal.remove();
+        document.getElementById('main').style="";
 }
 
 </script>
